@@ -1,0 +1,64 @@
+#include <fstream>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct nodo{
+    vector<int> vicini;
+    bool visitato = false;
+    int pos;
+};
+
+int nodi=0;
+int archi=0;
+vector<nodo> listaAdiacenza;
+
+int distanza_nodi(vector<nodo> &lista, nodo &n1, nodo &n2, int d) {
+    if (!n2.visitato) {
+        n2.visitato=true;
+        for (int i=0; i<n2.vicini.size(); i++) {
+            if (lista[n2.vicini[i]].pos!=n1.pos) {
+                return distanza_nodi(lista, n1, lista[n2.vicini[i]], d+1);
+            } else {
+                cout<<"ci va qua ester!!!!!";
+                return d;
+            }
+        }
+    }
+    cout<<d;
+    return -1;
+}
+
+int main() {
+    ifstream in("input.txt");
+    ofstream out("output.txt");
+    in >> nodi;
+    in >> archi;
+    listaAdiacenza.resize(nodi);
+
+    // Costruisco la lista di adiacenza di un grafo non orientato
+    for(int i=0;i<archi;i++){
+        int from;
+        int to;
+        in >> from >> to;
+        listaAdiacenza[from].vicini.push_back(to);
+        listaAdiacenza[to].vicini.push_back(from);
+        listaAdiacenza[from].pos=from;
+        listaAdiacenza[to].pos=to;
+    }
+
+    // Stampo la lista di adiacenza di un grafo non orientato
+    for (int i=0; i<listaAdiacenza.size(); i++) {
+        cout<<i<<" --> ";
+        for (int j=0; j<listaAdiacenza[i].vicini.size(); j++) {
+            cout<<listaAdiacenza[i].vicini[j]<<" ";
+        }
+        cout<<"pos: "<<listaAdiacenza[i].pos;
+        cout<<"\n";
+    }
+
+    int n=distanza_nodi(listaAdiacenza, listaAdiacenza[0], listaAdiacenza[3], 1);
+    cout<<n;
+    return 0;
+}
